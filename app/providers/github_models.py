@@ -1,7 +1,7 @@
 from openai import OpenAI
-
 from app.config.settings import settings
-
+from app.core.exceptions import AIProviderException
+from app.core.prompts import SYSTEM_PROMPT, SYSTEM_PROMPT
 
 class GitHubModelsProvider:
     def __init__(self):
@@ -10,15 +10,12 @@ class GitHubModelsProvider:
             base_url=settings.base_url,
         )
 
-    def chat(self, message: str) -> str:
-        response = self.client.chat.completions.create(
-            model=settings.model_name,
-            messages=[
-                {
-                    "role": "user",
-                    "content": message,
-                }
-            ],
-        )
-
-        return response.choices[0].message.content
+    def chat(self, messages: list) -> str:
+        try:
+            response = self.client.chat.completions.create(
+                model=settings.model_name,
+                messages=messages,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            raise AIProviderException(f"Failed to communicate with GitHub Models: {e}")

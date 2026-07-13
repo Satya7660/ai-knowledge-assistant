@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
+from app.core.exceptions import AIProviderException
 from app.models.chat_models import ChatRequest, ChatResponse
 from app.services.chat_service import ChatService
 
@@ -10,5 +11,11 @@ chat_service = ChatService()
 
 @router.post("", response_model=ChatResponse)
 def chat(request: ChatRequest):
-    response = chat_service.chat(request.message)
-    return ChatResponse(response=response)
+    try:
+        response = chat_service.chat(request.message)
+        return ChatResponse(response=response)
+    except AIProviderException:
+        raise HTTPException(
+            status_code=503,
+            detail="AI service is currently unavailable. Please try again later."
+        )
