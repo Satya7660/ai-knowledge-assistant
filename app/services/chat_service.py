@@ -1,19 +1,21 @@
 from app.providers.github_models import GitHubModelsProvider
-from app.core.prompts import SYSTEM_PROMPT
+from app.services.conversation_memory import ConversationMemory
+
 
 class ChatService:
+
     def __init__(self):
         self.provider = GitHubModelsProvider()
+        self.memory = ConversationMemory()
 
     def chat(self, message: str) -> str:
-        messages = [
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT,
-            },
-            {
-                "role": "user",
-                "content": message,
-            },
-        ]
-        return self.provider.chat(messages)
+
+        self.memory.add_user_message(message)
+
+        response = self.provider.chat(
+            self.memory.get_messages()
+        )
+
+        self.memory.add_assistant_message(response)
+
+        return response
