@@ -8,14 +8,14 @@ class ChatService:
         self.provider = GitHubModelsProvider()
         self.memory = ConversationMemory()
 
-    def chat(self, message: str) -> str:
+    def chat(self, session_id: str, message: str) -> str:
 
-        self.memory.add_user_message(message)
+        self.memory.add_user_message(session_id, message)
 
         response = self.provider.chat(
-            self.memory.get_messages()
+            self.memory.get_messages(session_id)
         )
 
-        self.memory.add_assistant_message(response)
+        self.memory.add_assistant_message(session_id, response)
 
         return response

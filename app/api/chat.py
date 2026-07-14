@@ -12,7 +12,10 @@ chat_service = ChatService()
 @router.post("", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        response = chat_service.chat(request.message)
+        response = chat_service.chat(
+            request.session_id, 
+            request.message
+        )
         return ChatResponse(response=response)
     except AIProviderException:
         raise HTTPException(
