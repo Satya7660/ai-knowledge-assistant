@@ -1,6 +1,7 @@
+import app
 from app.providers.github_models import GitHubModelsProvider
 from app.services.conversation_memory import ConversationMemory
-
+from app.core.constants import USER_ROLE, ASSISTANT_ROLE, SYSTEM_ROLE
 
 class ChatService:
 
@@ -10,12 +11,12 @@ class ChatService:
 
     def chat(self, session_id: str, message: str) -> str:
 
-        self.memory.add_user_message(session_id, message)
+        self.memory.add_message(session_id, USER_ROLE, message)
 
         response = self.provider.chat(
             self.memory.get_messages(session_id)
         )
 
-        self.memory.add_assistant_message(session_id, response)
+        self.memory.add_message(session_id, ASSISTANT_ROLE, response)
 
         return response
