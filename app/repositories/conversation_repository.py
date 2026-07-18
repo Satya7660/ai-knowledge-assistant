@@ -95,6 +95,43 @@ class ConversationRepository:
             for role, content in rows
             ]
 
+    def get_conversations(self):
+        with sqlite3.connect(self.database_path) as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("""
+            SELECT
+                conversations.session_id,
+                conversations.created_at,
+                COUNT(messages.id) AS message_count
+            FROM conversations
+            LEFT JOIN messages
+                ON conversations.session_id = messages.session_id
+            GROUP BY
+                conversations.session_id,
+                conversations.created_at
+            ORDER BY conversations.created_at DESC
+            """)
+
+            rows = cursor.fetchall()
+            return [
+                {
+                    "session_id": session_id,
+                    "created_at": created_at,
+                    "message_count": message_count
+                }
+                for session_id, created_at, message_count in rows
+            ]
+        
+    def get_conversation(self, session_id: str):
+        if not self.conversation_exists(session_id):
+            return None
+
+        return {
+            "session_id": session_id,
+            "messages": self.get_messages(session_id)
+        }
+    #clears all the messages in a conversation, but keeps the conversation itself    
     def clear_conversation(self, session_id: str):
         with sqlite3.connect(self.database_path) as connection:
             cursor = connection.cursor()
@@ -104,3 +141,18 @@ class ConversationRepository:
             """, (session_id,))
 
             connection.commit()
+
+    #deletes the entire conversation, including all its messages
+    def delete_conversation(self, session_id: str):
+        with sqlite3.connect(self.database_path) as connection:
+            cursor = connection.cursor()
+
+            cursor.execute("""
+                DELETE FROM conversations WHERE session_id = ?
+            """, (session_id,))
+            delete_count: bool = cursor.rowcount > 0 # Get the number of rows deleted
+
+            connection.commit()
+
+        return delete_count
+    

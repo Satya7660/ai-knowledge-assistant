@@ -21,3 +21,12 @@ class ConversationMemory:
 
     def clear(self, session_id: str):
         self._repository.clear_conversation(session_id)
+
+    def get_conversations(self):
+        return self._repository.get_conversations()
+    
+    def get_conversation(self, session_id: str):
+        return self._repository.get_conversation(session_id)
+    
+    def delete_conversation(self, session_id: str):
+        return self._repository.delete_conversation(session_id)

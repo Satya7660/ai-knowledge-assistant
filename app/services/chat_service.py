@@ -20,3 +20,12 @@ class ChatService:
         self.memory.add_message(session_id, ASSISTANT_ROLE, response)
 
         return response
+    
+    def get_conversations(self):
+        return self.memory.get_conversations()
+    
+    def get_conversation(self, session_id: str):
+        return self.memory.get_conversation(session_id)
+    
+    def delete_conversation(self, session_id: str):
+        return self.memory.delete_conversation(session_id)
