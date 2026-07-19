@@ -17,10 +17,13 @@ class ChatService:
             self.memory.get_messages(session_id)
         )
 
+        # complete_response = ""
+        # for chunk in response_stream:
+        #     complete_response += chunk  
+        #     yield chunk  # Yield each chunk as it arrives
         self.memory.add_message(session_id, ASSISTANT_ROLE, response)
-
         return response
-    
+
     def get_conversations(self):
         return self.memory.get_conversations()
     
