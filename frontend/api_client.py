@@ -22,7 +22,7 @@ class APIClient:
             )
     }
         response = requests.post(
-            f"{self.base_url}/upload_document",
+            f"{self.base_url}/documents/upload",
             files=files,
             timeout=30
         )

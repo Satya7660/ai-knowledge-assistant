@@ -6,7 +6,7 @@ from datetime import datetime
 class ConversationRepository:
 
     def __init__(self):
-        self.database_path = Path("app/data/conversation.db")
+        self.database_path = Path("app/data/assistant.db")
 
         self.database_path.parent.mkdir(
             parents=True,
