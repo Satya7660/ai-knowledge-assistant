@@ -67,6 +67,12 @@ with st.sidebar:
             result = client.upload_document(uploaded_file)
         st.success(result["message"])
 
+        st.text_area(
+            "Extracted Text",
+            result["text"],
+            height=300
+        )
+        
     if st.button("🗑 Clear Chat"):
         st.session_state.messages = []
         st.rerun()
